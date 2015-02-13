@@ -40,8 +40,6 @@ class FloatSpecification():
             self.bias = 0
 
     def getMaxValue(self):
-        #TODO: deal with infinities
-
         if self.exponent > 0 and self.special_values:
             """
             Creates a value equivalent with a 1 to the left of the decimal and 
