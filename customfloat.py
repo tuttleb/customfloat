@@ -16,9 +16,9 @@ class CustomFloat():
         self.mantissa = 0b0
 
 class FloatSpecification():
-    __slots__ = ('sign', 'exponent', 'mantissa', 'positive_infinity', 'negative_infinity', 'nan', 'bias')
+    __slots__ = ('sign', 'exponent', 'mantissa', 'special_values', 'bias')
 
-    def __init__(self, exponent, mantissa, sign=True, infinite_values=True, nan=True):
+    def __init__(self, exponent, mantissa, sign=True, special_values=True):
         """Creates a floating point specification
 
         Arguments:
@@ -27,18 +27,12 @@ class FloatSpecification():
         
         Keyword Arguments:
         sign -- Determines if the number has a sign bit (default=True)
-        infinite_values -- Determines if infinite values can be represented (default=True)
-        nan -- Determines if Not a Number (NaN) values can be represented (default=True)
+        special_values -- Determines if infinite and nan values can be represented (default=True)
         """
         self.sign = sign
         self.exponent = exponent
         self.mantissa = mantissa
-        self.nan = nan
-
-        if sign and infinite_values:
-            self.negative_infinity = True
-        if infinite_values:
-            self.positive_infinity = True
+        self.special_values = special_values
 
         if sign and exponent > 1:
             self.bias = 2 ** (exponent - 1) - 1
@@ -47,17 +41,27 @@ class FloatSpecification():
 
     def getMaxValue(self):
         #TODO: deal with infinities
-        max_val = (2 ** (self.mantissa + 1)) - 1
-        print("max: " + str(max_val))
 
-        if self.nan:
-            #decrease by one because all ones represents nan
-            max_val -= 1
-
-        if self.exponent > 0:
-            max_val <<= (2 ** self.exponent) - self.bias - self.mantissa - 2
-
-        return max_val
+        if self.exponent > 0 and self.special_values:
+            """
+            Creates a value equivalent with a 1 to the left of the decimal and 
+            mantissa 1's to the right of the decimal. This is then shifted to 
+            the left bias times. The bias is one less than the max value of the
+            exponent and is used because all 1's in the exponent represents a 
+            special value.
+            """
+            return (2 - 2 ** (-1 * self.mantissa)) * 2 ** self.bias
+        elif self.exponent > 0:
+            """
+            Does the same process as above except the final shift is increased
+            by 1 because there are no special values.
+            """
+            return (2 - 2 ** (-1 * (self.mantissa))) * 2 ** (self.bias + 1)
+        else:
+            """
+            There is no exponent so treat this like a normal binary number.
+            """
+            return (2 ** self.mantissa) - 1
 
 IEEE_SINGLE_PRECISION = FloatSpecification(8, 23)
 IEEE_DOUBLE_PRECISION = FloatSpecification(11, 52)
