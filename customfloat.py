@@ -34,7 +34,7 @@ class FloatSpecification():
         self.mantissa = mantissa
         self.special_values = special_values
 
-        if sign and exponent > 1:
+        if exponent > 1:
             self.bias = 2 ** (exponent - 1) - 1
         else:
             self.bias = 0
