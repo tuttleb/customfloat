@@ -61,5 +61,11 @@ class FloatSpecification():
             """
             return (2 ** self.mantissa) - 1
 
+    def getMinValue(self):
+        if self.sign:
+            return -1 * self.getMaxValue()
+        else:
+            return 0
+
 IEEE_SINGLE_PRECISION = FloatSpecification(8, 23)
 IEEE_DOUBLE_PRECISION = FloatSpecification(11, 52)
