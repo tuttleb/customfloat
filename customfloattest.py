@@ -59,14 +59,9 @@ class SpecMinValue(unittest.TestCase):
         self.assertEqual(custom_spec.getMinValue(), 0)
 
 class CustomFloatGetValue(unittest.TestCase):
-    pass
-    """
-TEST FAILING - This seems to be due to a rounding error. The value returned is correct for
- a double precision number but it is giving too many digits for an unknown reason.
     def testIEEESinglePositive(self):
         num = CustomFloat(IEEE_SINGLE_PRECISION, sign=0, exponent=134, mantissa=4458529)
-        self.assertEqual(num.getValue(), 196.03175)
-    """
+        self.assertEqual(num.getValue(), str(196.03175))
 
 if __name__ == "__main__":
     unittest.main()

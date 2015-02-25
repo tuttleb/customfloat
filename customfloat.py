@@ -33,13 +33,67 @@ class CustomFloat():
         else:
             self.mantissa = 0
    
-    def getValue(self):
+    def getValue(self, precise=True):
+        """Returns a string representation of this value in base 10
+
+        precise -- Determines if the numbers above and below should be used to
+            help determine value. Should be left alone to avoid getting to much
+            precision. (Defualt: True)
+        """
         val = (1 + self.mantissa * 2 ** (-1 * self.specification.mantissa)) * \
                 2 ** (self.exponent - self.specification.bias)
         if self.sign and self.sign == 1:
             val *= -1
 
-        return val
+        if not precise:
+            return str(val)
+
+
+        #TODO: Deal with values of zero and mantissa maxed out
+        if self.mantissa < 2 ** self.specification.mantissa - 1:
+            pass
+
+        if self.mantissa > 0:
+            pass
+
+        #Create the numbers directly above and below the current number
+        numAbove = CustomFloat(self.specification, sign=self.sign, exponent=self.exponent, mantissa=self.mantissa + 1)
+        numBelow = CustomFloat(self.specification, sign=self.sign, exponent=self.exponent, mantissa=self.mantissa - 1)
+
+        numAbove_str = str(numAbove.getValue(precise=False))
+        numBelow_str = str(numBelow.getValue(precise=False))
+        val_str = str(val)
+
+        max_length = max([len(numAbove_str), len(numBelow_str), len(val_str)])
+        
+        #Add zeroes on the end so they are all the same length
+        numAbove_str = numAbove_str.ljust(max_length, '0')
+        numBelow_str = numBelow_str.ljust(max_length, '0')
+        val_str = val_str.ljust(max_length, '0')
+
+        index = 0
+
+        #Find the last index where all values are the same
+        for i in range(max_length):
+            if val_str[i] != '.':
+                above = int(numAbove_str[i])
+                current = int(val_str[i])
+                below = int(val_str[i])
+
+                if above == current == below:
+                    index = i
+
+        #The value after the last shared index is the last included digit
+        val_after_change = int(val_str[index+1])
+        #TODO: Deal with carrying digits
+        #Round up if necessary
+        if int(val_str[index+2]) >= 5:
+            val_after_change += 1
+
+
+        val_str = val_str[:index+1] + str(val_after_change)
+
+        return val_str
 
 class FloatSpecification():
     __slots__ = ('sign', 'exponent', 'mantissa', 'special_values', 'bias')
