@@ -64,6 +64,10 @@ class CustomFloat():
         numBelow_str = str(numBelow.getValue(precise=False))
         val_str = str(val)
 
+        print(numAbove_str)
+        print(val_str)
+        print(numBelow_str)
+
         max_length = max([len(numAbove_str), len(numBelow_str), len(val_str)])
         
         #Add zeroes on the end so they are all the same length
@@ -74,14 +78,22 @@ class CustomFloat():
         index = 0
 
         #Find the last index where all values are the same
+        #In need of a better solution
         for i in range(max_length):
-            if val_str[i] != '.':
+            print(val_str[i])
+            if val_str[i] != '.' and val_str[i] != '-' and val_str[i] != 'e':
                 above = int(numAbove_str[i])
                 current = int(val_str[i])
                 below = int(val_str[i])
 
                 if above == current == below:
                     index = i
+                else:
+                    break
+
+        #This does not work because the numbers need to be rounded up first.
+        if int(numAbove_str[index+1]) != int(val_str[index+1]) + 1 or int(val_str[index+1]) != int(val_str[index+1]) + 1:
+            return val_str[:index+1]
 
         #The value after the last shared index is the last included digit
         val_after_change = int(val_str[index+1])

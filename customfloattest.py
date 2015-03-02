@@ -61,7 +61,20 @@ class SpecMinValue(unittest.TestCase):
 class CustomFloatGetValue(unittest.TestCase):
     def testIEEESinglePositive(self):
         num = CustomFloat(IEEE_SINGLE_PRECISION, sign=0, exponent=134, mantissa=4458529)
+        #The following assert fails. I believe this is due to a rounding issue.
         self.assertEqual(num.getValue(), str(196.03175))
+
+        num2 = CustomFloat(IEEE_SINGLE_PRECISION, sign=0, exponent=129, mantissa=590084)
+        self.assertEqual(num2.getValue(), str(4.281374))
+
+        num3 = CustomFloat(IEEE_SINGLE_PRECISION, sign=0, exponent=143, mantissa=590084)
+        self.assertEqual(num3.getValue(), str(70146.03))
+
+    #TEST FAILING
+    #REASON: Difficulty converting scientific notation into a number
+    def testIEEESingleSmallNegative(self):
+        num = CustomFloat(IEEE_SINGLE_PRECISION, sign=1, exponent=34, mantissa=590084)
+        self.assertEqual(num.getValue(), str(""))
 
 if __name__ == "__main__":
     unittest.main()
