@@ -107,6 +107,28 @@ class CustomFloat():
 
         return val_str
 
+    def _isInt(self, i):
+        try:
+            int(i)
+            return True
+        except ValueError:
+            return False
+
+    def _strToNumList(self, num_str):
+        return [int(i) if self._isInt(i) else i for i in num_str]
+
+    def _roundUpNumArray(self, num_list):
+        #TODO: Check if the number should be rounded?
+        carry = 1
+        for i in range(len(num_list)-1, -1, -1):
+            if not self._isInt(num_list[i]):
+                continue
+            else:
+                num = int(num_list[i])
+                
+
+
+
 class FloatSpecification():
     __slots__ = ('sign', 'exponent', 'mantissa', 'special_values', 'bias')
 
