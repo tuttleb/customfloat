@@ -1,3 +1,5 @@
+from bitstring import BitArray, BitStream
+
 class CustomFloat():
     def __init__(self, specification, **kwargs):
         """Creates a custom floating point number
@@ -60,9 +62,9 @@ class CustomFloat():
         numAbove = CustomFloat(self.specification, sign=self.sign, exponent=self.exponent, mantissa=self.mantissa + 1)
         numBelow = CustomFloat(self.specification, sign=self.sign, exponent=self.exponent, mantissa=self.mantissa - 1)
 
-        numAbove_str = str(numAbove.getValue(precise=False))
-        numBelow_str = str(numBelow.getValue(precise=False))
-        val_str = str(val)
+        numAbove_str = '{:f}'.format(numAbove.getValue(precise=False))
+        numBelow_str = '{:f}'.format(numBelow.getValue(precise=False))
+        val_str = '{:f}'.format(val)
 
         print(numAbove_str)
         print(val_str)
@@ -118,16 +120,32 @@ class CustomFloat():
         return [int(i) if self._isInt(i) else i for i in num_str]
 
     def _roundUpNumArray(self, num_list):
-        #TODO: Check if the number should be rounded?
+        #TODO: Scientific notation
         carry = 1
+
+        #TODO: Check if the number should be rounded?
         for i in range(len(num_list)-1, -1, -1):
+            if carry == 0:
+                return
             if not self._isInt(num_list[i]):
                 continue
             else:
                 num = int(num_list[i])
-                
 
+                num += carry
+                carry = num // 10
+                num %= 10
 
+                num_list[i] = num
+
+        if carry != 0:
+            if self._isInt(num_list[0]):
+                num_list.insert(0, carry)
+            else:
+                #If there is a sign at the beginning insert the extra number 1 to the left
+                num_list.insert(1, carry)
+
+        
 
 class FloatSpecification():
     __slots__ = ('sign', 'exponent', 'mantissa', 'special_values', 'bias')
